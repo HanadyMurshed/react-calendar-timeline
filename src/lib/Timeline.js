@@ -157,10 +157,13 @@ export default class ReactCalendarTimeline extends Component {
 
     verticalLineClassNamesForTime: PropTypes.func,
 
-    children: PropTypes.node
+    children: PropTypes.node,
+
+    disableAutoScroll: PropTypes.bool
   }
 
   static defaultProps = {
+    disableAutoScroll: false,
     sidebarWidth: 150,
     rightSidebarWidth: 0,
     dragSnap: 1000 * 60 * 15, // 15min
@@ -446,7 +449,7 @@ export default class ReactCalendarTimeline extends Component {
         (prevState.visibleTimeStart - prevState.canvasTimeStart) /
         oldZoom
     )
-    if (componentScrollLeft !== scrollLeft || this.scrollComponent.scrollLeft !== scrollLeft) {
+    if (componentScrollLeft !== scrollLeft || this.scrollComponent.scrollLeft !== scrollLeft && !this.props.disableAutoScroll) {
       this.scrollComponent.scrollLeft = scrollLeft
       this.scrollHeaderRef.scrollLeft = scrollLeft
     }
@@ -491,8 +494,11 @@ export default class ReactCalendarTimeline extends Component {
       groupTops
     })
 
-    this.scrollComponent.scrollLeft = width
-    this.scrollHeaderRef.scrollLeft = width
+    if (!this.props.disableAutoScroll) {
+      this.scrollComponent.scrollLeft = width
+      this.scrollHeaderRef.scrollLeft = width
+    }
+
   }
 
   onScroll = scrollX => {
